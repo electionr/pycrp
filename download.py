@@ -8,7 +8,7 @@ import sys
 import urllib, urllib2
 import MySQLdb
 from optparse import make_option
-
+import os.path
 from credentials import *
 
 from campfin import CampFinDownloader
@@ -57,12 +57,12 @@ class CRPDownloader(object):
         
         self.meta = { }
         meta_path = os.path.join(self.path, 'meta.csv')
-        print meta_path
+        #print meta_path
         if os.path.exists(meta_path):
             print 'exists'
             meta_file = open(meta_path, 'r').read()
             reader = csv.DictReader(meta_file, fieldnames=META_FIELDS)
-            print meta_file
+            #print meta_file
             for record in reader:
                 self.meta[record['url']] = record
                 
@@ -72,7 +72,7 @@ class CRPDownloader(object):
     
     def go(self, sections, redownload=False):
         resources = self.get_resources()
-        logging.info(resources)
+        #logging.info("resources %s" % resources)
         self._bulk_download(resources, sections, redownload)
     
     def _bulk_download(self, resources, sections, redownload=False):
@@ -80,7 +80,7 @@ class CRPDownloader(object):
         meta_file = open(os.path.join(self.path, 'meta.csv'), 'w+')
         meta = csv.DictWriter(meta_file, fieldnames=META_FIELDS)
         
-        logging.info(self.meta)
+        #logging.info("meta %s" % self.meta)
         
         for res in resources:
             
@@ -98,21 +98,21 @@ class CRPDownloader(object):
             
             file_path = os.path.join(self.path, "%s.%s" % (res['filename'], res['ext']))
             
-            logging.info('downloading %s.%s' % (res['filename'], res['ext']))
-            logging.info('downloading url %s' % (res['url']))
             
-            r = self.opener.open(res['url'])
-                            
-            outfile = open(file_path, 'w')
-            outfile.write(r.read())
-            outfile.close()
-            
-            res['filesize'] = "%iMB" % (os.path.getsize(file_path) / 1024 / 1024)
-            
-            meta.writerow(res)
-        
-        
-            self.extract(file_path, DEST_PATH)
+            if not os.path.exists(file_path):
+                logging.info('downloading %s.%s' % (res['filename'], res['ext']))
+                logging.info('downloading url %s' % (res['url']))
+
+                r = self.opener.open(res['url'])
+                outfile = open(file_path, 'w')
+                outfile.write(r.read())
+                outfile.close()
+                res['filesize'] = "%iMB" % (os.path.getsize(file_path) / 1024 / 1024)
+                meta.writerow(res)
+            else:
+                logging.info('already got url %s' % (res['url']))                
+                
+            #self.extract(file_path, DEST_PATH)
                     
         meta_file.close()
         
@@ -137,11 +137,12 @@ class CRPDownloader(object):
         DL_RE = re.compile(r'<filename>([\w]+)\.zip</filename>', re.I | re.M)
 
         for m in DL_RE.findall(r.read()):
-            f = m
-#            print "match",f
-            res = { 'filename': f}
+            print "match",m
+            f = "%s" % m
+
+            res = { 'filename': f }
             res['url'] = DOWNLOAD_URL % "%s.zip" % f
-            res['ext'] = '.zip'
+            res['ext'] = 'zip'
             print "result",res
             resources.append(res)  
         
