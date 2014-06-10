@@ -22,9 +22,9 @@ cycle_re = re.compile(r"(20)?(\d{2})")
 
 LOGIN_URL = "http://www.opensecrets.org/MyOS/index.php"
 MYOSHOME_URL = "http://www.opensecrets.org/MyOS/home.php"
-BULKDATA_URL = "http://www.opensecrets.org/MyOS/bulk.php"
+BULKDATA_URL = "http://www.opensecrets.org/myos/odata_meta.xml"
 DOWNLOAD_URL = "http://www.opensecrets.org/MyOS/download.php?f=%s"
-
+ 
 REQUEST_HEADERS = {
     "User-Agent": "CRPPYDWNLDR v1.0 ~ CRP Python Downloader",
 }
@@ -99,6 +99,7 @@ class CRPDownloader(object):
             file_path = os.path.join(self.path, "%s.%s" % (res['filename'], res['ext']))
             
             logging.info('downloading %s.%s' % (res['filename'], res['ext']))
+            logging.info('downloading url %s' % (res['url']))
             
             r = self.opener.open(res['url'])
                             
@@ -116,7 +117,7 @@ class CRPDownloader(object):
         meta_file.close()
         
     def get_resources(self):
-        
+        print "get resources"
         now = datetime.datetime.now()
         updated = now.date().isoformat()
         
@@ -130,17 +131,19 @@ class CRPDownloader(object):
         r = self.opener.open(LOGIN_URL, params)
 
         # get bulk download url
-
+        print "get URL ", BULKDATA_URL
         r = self.opener.open(BULKDATA_URL)
 
-        DL_RE = re.compile(r'<li>\s*<a href="download.php\?f=(?P<filename>\w+)\.(?P<ext>\w{3})">(?P<description>.+?)</a>\s*(?P<filesize>\d{1,3}MB) -- Last updated: (?P<updated>\d{1,2}/\d{1,2}/\d{2})\s*</li>', re.I | re.M)
+        DL_RE = re.compile(r'<filename>([\w]+)\.zip</filename>', re.I | re.M)
 
         for m in DL_RE.findall(r.read()):
-            res = dict(zip(['filename','ext','description','filesize','updated'], m))
-            res['url'] = DOWNLOAD_URL % "%s.%s" % (res['filename'], res['ext'])
-            
-            if res['filename'][-2:] in self.cycles or res['filename']=='Lobby':
-                resources.append(res)  
+            f = m
+#            print "match",f
+            res = { 'filename': f}
+            res['url'] = DOWNLOAD_URL % "%s.zip" % f
+            res['ext'] = '.zip'
+            print "result",res
+            resources.append(res)  
         
         # PFD data range spreadsheet
         
@@ -205,23 +208,23 @@ if __name__ == '__main__':
         elif arg in POSSIBLE_SECTIONS:
             if arg not in sections: sections.append(arg)
         
-    if not len(cycles): cycles = DEFAULT_CYCLES
+    if not len(cycles): cycles = [1990, 1992, 1994, 1996, 1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014]
     if not len(sections): sections = POSSIBLE_SECTIONS
     
     logging.basicConfig(level=logging.DEBUG)
     
-    #dl = CRPDownloader(cycles,sections)
-    #dl.go(sections)
+    dl = CRPDownloader(cycles,sections)
+    dl.go(sections)
     
-    db = MySQLdb.connect(host=MYSQL_HOST, user=MYSQL_USER, passwd=MYSQL_PASSWORD,db=MYSQL_DB)
-    cursor = db.cursor()
+#    db = MySQLdb.connect(host=MYSQL_HOST, user=MYSQL_USER, passwd=MYSQL_PASSWORD,db=MYSQL_DB)
+
     
-    if 'campfin' in sections:
-        CampFinDownloader(cursor,DEST_PATH,cycles).go()
-    if 'expend' in sections:
-        ExpendsDownloader(cursor,DEST_PATH,cycles).go()
-    if 'lobby' in sections:
-        LobbyDownloader(cursor,DEST_PATH).go()
-    if 'extras' in sections:
-        ExtrasDownloader(cursor,DEST_PATH,cycles).go()
+    # if 'campfin' in sections:
+    #     CampFinDownloader(DEST_PATH,cycles).go()
+    # if 'expend' in sections:
+    #     ExpendsDownloader(DEST_PATH,cycles).go()
+    # if 'lobby' in sections:
+    #     LobbyDownloader(DEST_PATH).go()
+    # if 'extras' in sections:
+    #     ExtrasDownloader(DEST_PATH,cycles).go()
 

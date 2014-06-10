@@ -1,7 +1,7 @@
-CYCLES = ['06',"08", "10","12"]
+CYCLES = ['06',"08", "10","12", "14"]
 
-CRP_EMAIL = #Your MyOpenSecrets login
-CRP_PASSWORD = ''
+CRP_EMAIL = 'jamesmikedupont@googlemail.com'
+CRP_PASSWORD = 'fodGordOaj5'
 MYSQL_HOST = "localhost" 
 MYSQL_USER = "root" #Your MySQL login
 MYSQL_PASSWORD = ""

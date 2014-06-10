@@ -12,9 +12,8 @@ import re
 
 class LobbyDownloader(object):
     
-    def __init__(self,cursor,path):
+    def __init__(self,path):
         
-        self.cursor = cursor
         self.dest_path = path
 
     def createtables(self):
@@ -116,8 +115,9 @@ class LobbyDownloader(object):
 
 
     def go(self):
-        self.createtables()
-        self.populatetables()
+        #self.createtables()
+        #self.populatetables()
+        pass
         
 
 

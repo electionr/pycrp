@@ -24,9 +24,9 @@ from BeautifulSoup import BeautifulSoup
 
 class ExtrasDownloader(object):
     
-    def __init__(self,cursor,path,cycles):
+    def __init__(self,path,cycles):
         
-        self.cursor = cursor
+
         self.path = path
         self.cycles = cycles
         
@@ -190,5 +190,6 @@ class ExtrasDownloader(object):
 
         
     def go(self):
-        self.createtables()
+        #self.createtables()
         self.populatetables()
+        pass

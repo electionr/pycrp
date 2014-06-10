@@ -24,9 +24,8 @@ import re
 
 class CampFinDownloader(object):
     
-    def __init__(self,cursor,path,cycles):
+    def __init__(self,path,cycles):
         
-        self.cursor = cursor
         self.dest_path = path
         self.cycles = cycles
 
@@ -139,8 +138,8 @@ class CampFinDownloader(object):
                 );"""
         ]
           
-        for query in queries:
-            self.cursor.execute(query)
+#        for query in queries:
+#            self.cursor.execute(query)
 
 
 
@@ -184,34 +183,35 @@ class CampFinDownloader(object):
                         sql = sql+' %s,'
                     sql = sql[:-1]+");"
 
-                    try:
-                        self.cursor.execute(sql,tuple(row)) 
-                    except:
-                        print( "This FAILED:" + sql + str(row) )
-                        pass
+ #                    try:
+# #                        self.cursor.execute(sql,tuple(row)) 
+#                     except:
+#                         print( "This FAILED:" + sql + str(row) )
+#                         pass
 
 
         ext = ".txt"
-        for year in self.cycles:
-            """self.cursor.execute("DELETE FROM crp_cmtes WHERE cycle='20%s'" % year)
-            self.cursor.execute("LOAD DATA LOCAL INFILE '%s' INTO TABLE crp_cmtes FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '|'" % os.path.join(self.dest_path, "cmtes" + year + ext))
+        # for year in self.cycles:
+        #     """self.cursor.execute("DELETE FROM crp_cmtes WHERE cycle='20%s'" % year)
+        #     self.cursor.execute("LOAD DATA LOCAL INFILE '%s' INTO TABLE crp_cmtes FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '|'" % os.path.join(self.dest_path, "cmtes" + year + ext))
             
-            self.cursor.execute("DELETE FROM crp_cands WHERE cycle='20%s'" % year)
-            self.cursor.execute("LOAD DATA LOCAL INFILE '%s' INTO TABLE crp_cands FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '|'" % os.path.join(self.dest_path, "cands" + year + ext))
+        #     self.cursor.execute("DELETE FROM crp_cands WHERE cycle='20%s'" % year)
+        #     self.cursor.execute("LOAD DATA LOCAL INFILE '%s' INTO TABLE crp_cands FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '|'" % os.path.join(self.dest_path, "cands" + year + ext))
             
-            self.cursor.execute("DELETE FROM crp_indivs WHERE cycle='20%s'" % year)
-            writerowsfromcsv( os.path.join(self.dest_path, "indivs" + year + ext), "indivs")"""
+        #     self.cursor.execute("DELETE FROM crp_indivs WHERE cycle='20%s'" % year)
+        #     writerowsfromcsv( os.path.join(self.dest_path, "indivs" + year + ext), "indivs")"""
             
-            self.cursor.execute("DELETE FROM crp_pacs WHERE cycle='20%s'" % year)
-            sql = "LOAD DATA LOCAL INFILE '" + os.path.join(self.dest_path, "pacs" + year + ext) + "' INTO TABLE crp_pacs  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '|' (Cycle,FECRecNo,PACID,CID,Amount,@Date_orig,RealCode,Type,DI,FECCandID) SET Date = STR_TO_DATE(@Date_orig, '%m/%d/%Y')"
-            self.cursor.execute(sql)
+        #     self.cursor.execute("DELETE FROM crp_pacs WHERE cycle='20%s'" % year)
+        #     sql = "LOAD DATA LOCAL INFILE '" + os.path.join(self.dest_path, "pacs" + year + ext) + "' INTO TABLE crp_pacs  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '|' (Cycle,FECRecNo,PACID,CID,Amount,@Date_orig,RealCode,Type,DI,FECCandID) SET Date = STR_TO_DATE(@Date_orig, '%m/%d/%Y')"
+        #     self.cursor.execute(sql)
             
-            self.cursor.execute("DELETE FROM crp_pac_other WHERE cycle='20%s'" % year)
-            self.cursor.execute("LOAD DATA LOCAL INFILE '"+os.path.join(self.dest_path, "pac_other" + year + ext)+"' INTO TABLE crp_pac_other FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '|' (Cycle,FECRecNo,FilerID,DonorCmte,ContribLendTrans,City,State,Zip,FECOccEmp,PrimCode,@Date_orig,Amount,RecipID,Party,OtherID,RecipCode,RecipPrimcode,Amend,Report,PG,Microfilm,Type,Realcode,Source) SET Date = STR_TO_DATE(@Date_orig, '%m/%d/%Y')")
+        #     self.cursor.execute("DELETE FROM crp_pac_other WHERE cycle='20%s'" % year)
+        #     self.cursor.execute("LOAD DATA LOCAL INFILE '"+os.path.join(self.dest_path, "pac_other" + year + ext)+"' INTO TABLE crp_pac_other FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '|' (Cycle,FECRecNo,FilerID,DonorCmte,ContribLendTrans,City,State,Zip,FECOccEmp,PrimCode,@Date_orig,Amount,RecipID,Party,OtherID,RecipCode,RecipPrimcode,Amend,Report,PG,Microfilm,Type,Realcode,Source) SET Date = STR_TO_DATE(@Date_orig, '%m/%d/%Y')")
 
 
     def go(self):
-        self.createtables()
-        self.populatetables()
+        #self.createtables()
+        #self.populatetables()
+        pass
 
 

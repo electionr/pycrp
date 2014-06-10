@@ -6,9 +6,8 @@ import os
 
 class ExpendsDownloader(object):
     
-    def __init__(self,cursor,path,cycles):
+    def __init__(self,path,cycles):
         
-        self.cursor = cursor
         self.dest_path = path
         self.cycles = cycles
         
@@ -115,5 +114,6 @@ class ExpendsDownloader(object):
 
 
     def go(self):
-        self.createtables()
-        self.populatetables()
+        #self.createtables()
+        #self.populatetables()
+        pass
